@@ -4,18 +4,16 @@ import textwrap
 import asyncio
 from typing import List, Optional
 from openai import OpenAI
-from dotenv import load_dotenv
-
-# Force load variables from .env file, ignoring terminal memory
-load_dotenv(override=True)
 
 # Absolute imports (fixes the relative import error)
 from client import SmartGridEnvClient
 from models import GridAction
 
-API_KEY = os.getenv("API_KEY") or os.getenv("HF_TOKEN")
+# --- STRICT CHECKLIST COMPLIANCE ---
 API_BASE_URL = os.getenv("API_BASE_URL", "https://api.groq.com/openai/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "llama-3.3-70b-versatile")
+HF_TOKEN = os.getenv("HF_TOKEN")  # No defaults, exact name required by judges
+
 TASK_NAME = os.getenv("SMART_GRID_TASK", "hard_storm_survival")
 BENCHMARK = "smart_grid_env"
 MAX_STEPS = 5
@@ -44,7 +42,8 @@ def log_end(success: bool, steps: int, score: float, rewards: List[float]):
     print(f"[END] success={str(success).lower()} steps={steps} score={score:.3f} rewards={rewards_str}", flush=True)
 
 async def main():
-    client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
+    # Pass HF_TOKEN to the client
+    client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
     env = SmartGridEnvClient(base_url="http://localhost:8000")
     
     rewards = []
