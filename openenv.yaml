@@ -1,0 +1,45 @@
+spec_version: 1
+name: smart_grid_env
+type: space
+runtime: fastapi
+app: server.app:app
+port: 8000
+description: "Cyber-Physical Energy Simulation. The agent manages a city micro-grid, balancing solar generation, battery storage, and market prices to prevent blackouts."
+tasks:
+  - id: easy_battery_charge
+    name: "Surplus Storage"
+    description: "Charge the battery using the noon solar surplus."
+    difficulty: "easy"
+    grader: |
+      def grade(state):
+          if state.get('battery_charge_mwh', 0) >= 40.0:
+              return 1.0
+          return 0.0
+
+  - id: medium_peak_shaving
+    name: "Peak Shaving"
+    description: "Discharge the battery to cover the 6 PM load spike."
+    difficulty: "medium"
+    grader: |
+      def grade(state):
+          budget = state.get('budget_remaining', 0)
+          return max(0.0, min(budget / 1000.0, 1.0))
+
+  - id: hard_storm_survival
+    name: "Survive the Storm"
+    description: "Manage grid purchases to survive the night without going bankrupt."
+    difficulty: "hard"
+    grader: |
+      def grade(state):
+          if state.get('blackout_occurred', False):
+              return 0.0
+          budget = state.get('budget_remaining', 0)
+          return max(0.0, min(budget / 1000.0, 1.0))
+
+# spec_version: 1
+# name: smart_grid_env
+# type: space
+# runtime: fastapi
+# app: server.app:app
+# port: 8000
+
