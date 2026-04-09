@@ -3,24 +3,21 @@ name: "smart_grid_env"
 description: "Cyber-Physical Energy Simulation. The agent manages a city micro-grid, balancing solar generation, battery storage, and market prices to prevent blackouts."
 
 tasks:
-  - id: "easy_battery_charge"
+  - id: "easy_surplus"
     name: "Surplus Storage"
-    description: "Charge the battery using the noon solar surplus."
+    description: "Identify a noon solar surplus and charge the battery."
     difficulty: "easy"
-    grader: "server.smart_grid_env_environment:easy_grader"
-  
-  - id: "medium_peak_shaving"
+    grader: "graders:easy_grader"
+  - id: "medium_peak"
     name: "Peak Shaving"
-    description: "Discharge the battery to cover the 6 PM load spike."
+    description: "Discharge the battery to cover a 6 PM demand spike."
     difficulty: "medium"
-    grader: "server.smart_grid_env_environment:medium_grader"
-  
+    grader: "graders:medium_grader"
   - id: "hard_storm_survival"
     name: "Survive the Storm"
-    description: "Manage grid purchases to survive the night without going bankrupt."
+    description: "Build a battery reserve and survive a severe evening storm."
     difficulty: "hard"
-    grader: "server.smart_grid_env_environment:hard_grader"
-
+    grader: "graders:hard_grader"
 # spec_version: 1
 # name: smart_grid_env
 # type: space
