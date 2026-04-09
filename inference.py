@@ -1,3 +1,5 @@
+# inference.py
+
 import os
 import json
 import textwrap
@@ -5,7 +7,7 @@ import asyncio
 from typing import List, Optional
 from openai import OpenAI
 
-# Absolute imports (fixes the relative import error)
+# Absolute imports
 from client import SmartGridEnvClient
 from models import GridAction
 
@@ -17,6 +19,7 @@ HF_TOKEN = os.getenv("HF_TOKEN")  # No defaults, exact name required by judges
 TASK_NAME = os.getenv("SMART_GRID_TASK", "hard_storm_survival")
 BENCHMARK = "smart_grid_env"
 MAX_STEPS = 5
+MAX_POSSIBLE_REWARD = 2.0  # Used to normalize the final score
 
 SYSTEM_PROMPT = textwrap.dedent(
     """
@@ -42,13 +45,14 @@ def log_end(success: bool, steps: int, score: float, rewards: List[float]):
     print(f"[END] success={str(success).lower()} steps={steps} score={score:.3f} rewards={rewards_str}", flush=True)
 
 async def main():
-    # Pass HF_TOKEN to the client
     client = OpenAI(base_url=API_BASE_URL, api_key=HF_TOKEN)
     env = SmartGridEnvClient(base_url="http://localhost:8000")
     
-    rewards = []
+    # FIX: Initialize these variables so the `finally` block doesn't crash on failure
+    rewards: List[float] = []
     steps_taken = 0
     score = 0.0
+    success = False
     
     log_start(task=TASK_NAME, env=BENCHMARK, model=MODEL_NAME)
     
@@ -79,7 +83,7 @@ async def main():
                 elif "```" in response_text:
                     response_text = response_text.split("```")[1].strip()
                 
-                # Robust multi-JSON filtering (grabs only the first action if AI hallucinates multiple)
+                # Robust multi-JSON filtering
                 if '}\n{' in response_text:
                     response_text = response_text.split('}\n{')[0] + '}'
                 elif '}{' in response_text:
@@ -113,9 +117,13 @@ async def main():
             if done:
                 break
                 
-        # Calculate final score
-        score = sum(rewards) / len(rewards) if rewards else 0.0
+        # FIX: Calculate final score and strictly clamp between [0.0, 1.0]
+        raw_score = sum(rewards) / MAX_POSSIBLE_REWARD
+        score = min(max(raw_score, 0.0), 1.0)
         success = score > 0.0
+        
+    except Exception as run_error:
+        print(f"[DEBUG] Execution Error: {run_error}")
         
     finally:
         log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
