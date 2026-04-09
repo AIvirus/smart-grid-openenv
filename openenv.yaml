@@ -11,23 +11,16 @@ tasks:
     name: "Surplus Storage"
     description: "Identify a noon solar surplus and charge the battery."
     difficulty: "easy"
-    grader: "smart_grid_env.graders:easy_grader"
+    grader: "graders:easy_grader"
     
   - id: "medium_peak"
     name: "Peak Shaving"
     description: "Discharge the battery to cover a 6 PM demand spike."
     difficulty: "medium"
-    grader: "smart_grid_env.graders:medium_grader"
+    grader: "graders:medium_grader"
     
   - id: "hard_storm_survival"
     name: "Survive the Storm"
     description: "Build a battery reserve and survive a severe evening storm."
     difficulty: "hard"
-    grader: "smart_grid_env.graders:hard_grader"
-# spec_version: 1
-# name: smart_grid_env
-# type: space
-# runtime: fastapi
-# app: server.app:app
-# port: 8000
-
+    grader: "graders:hard_grader"
