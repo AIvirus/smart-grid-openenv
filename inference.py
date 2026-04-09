@@ -54,7 +54,7 @@ async def run_task(client: OpenAI, env: SmartGridEnvClient, task_name: str):
     log_start(task=task_name, env=BENCHMARK, model=MODEL_NAME)
     
     try:
-        result = await env.reset()
+        result = await env.reset(task_id=task_name)
         
         for step in range(1, MAX_STEPS + 1):
             if result.done:
