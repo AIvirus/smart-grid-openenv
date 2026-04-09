@@ -7,16 +7,22 @@ port: 8000
 description: "Cyber-Physical Energy Simulation. The agent manages a city micro-grid, balancing solar generation, battery storage, and market prices to prevent blackouts."
 
 tasks:
-  - name: easy_surplus
-    description: "Surplus Storage: Identify a noon solar surplus and charge the battery."
+  - id: easy_surplus
+    name: "Surplus Storage"
+    description: "Identify a noon solar surplus and charge the battery."
+    difficulty: "easy"
     grader: graders:easy_grader
 
-  - name: medium_peak
-    description: "Peak Shaving: Discharge the battery to cover a 6 PM demand spike."
+  - id: medium_peak
+    name: "Peak Shaving"
+    description: "Discharge the battery to cover a 6 PM demand spike."
+    difficulty: "medium"
     grader: graders:medium_grader
 
-  - name: hard_storm_survival
-    description: "Survive the Storm: Build a battery reserve and survive a severe evening storm."
+  - id: hard_storm_survival
+    name: "Survive the Storm"
+    description: "Build a battery reserve and survive a severe evening storm."
+    difficulty: "hard"
     grader: graders:hard_grader
 
 # spec_version: 1
